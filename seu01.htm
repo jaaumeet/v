@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reloj de Color RGB Dinámico</title>
+    <style>
+        body {
+            /* Estilos base: Ocupar toda la pantalla y transición suave */
+            transition: background-color 1s ease-in-out;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff; /* Texto blanco por defecto */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+        }
+
+        #timeDisplay {
+            font-size: 4em;
+            font-weight: bold;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente para el texto */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor lectura */
+        }
+
+        #rgbCode {
+            margin-top: 10px;
+            font-size: 1.5em;
+            font-weight: lighter;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timeDisplay">--:--:--</div>
+    <div id="rgbCode">RGB: (---, ---, ---)</div>
+
+    <script>
+        /**
+         * Función que actualiza el color de fondo y el reloj.
+         */
+        function updateDynamicColorClock() {
+            const now = new Date();
+            const hours = now.getHours();   // 0 - 23
+            const minutes = now.getMinutes(); // 0 - 59
+            const seconds = now.getSeconds(); // 0 - 59
+
+            // --- 1. Mapeo de RGB (0-255) basado en el tiempo ---
+            
+            // Componente Rojo (R): Basado en las Horas (0-23 -> 0-255)
+            const r = Math.floor((hours / 23) * 255);
+
+            // Componente Verde (G): Basado en los Minutos (0-59 -> 0-255)
+            const g = Math.floor((minutes / 59) * 255);
+
+            // Componente Azul (B): Basado en los Segundos (0-59 -> 0-255)
+            const b = Math.floor((seconds / 59) * 255);
+            
+            // Genera la cadena de color RGB
+            const rgbColor = rgb(${r}, ${g}, ${b});
+
+            // Aplica el color al fondo del body
+            document.body.style.backgroundColor = rgbColor;
+
+            // --- 2. Formateo y visualización de la hora ---
+
+            // Función de ayuda para añadir un cero inicial si el número es menor a 10
+            const pad = (num) => num.toString().padStart(2, '0');
+
+            // Formatea la hora en HH:MM:SS
+            const timeString = ${pad(hours)}:${pad(minutes)}:${pad(seconds)};
+
+            // Actualiza el texto en la página
+            document.getElementById('timeDisplay').textContent = timeString;
+            document.getElementById('rgbCode').textContent = RGB: (${r}, ${g}, ${b});
+        }
+
+        // Ejecuta la función inmediatamente para que no haya un retraso inicial
+        updateDynamicColorClock();
+
+        // Ejecuta la función cada 1000 milisegundos (1 segundo)
+        setInterval(updateDynamicColorClock, 1000); 
+    </script>
+
+</body>
+</html>
