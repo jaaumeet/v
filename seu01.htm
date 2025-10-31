@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj y Color RGB Dinámico</title>
+    <title>Reloj, Color RGB Dinámico y Display</title>
     <style>
-        /* Estilos básicos para centrar el texto */
+        /* Estilos para centrar el contenido y asegurar la visibilidad */
         body {
             display: flex;
             flex-direction: column;
@@ -14,24 +14,27 @@
             height: 100vh;
             margin: 0;
             transition: background-color 1s ease; /* Transición suave para el color de fondo */
-            font-family: sans-serif;
-            color: #ffffff; /* Color de texto blanco para contraste */
-            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor visibilidad */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff; /* Color de texto blanco por defecto */
+            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor contraste */
+            text-align: center;
         }
-        #reloj {
+        #display-tiempo {
             font-size: 5em;
             font-weight: bold;
+            letter-spacing: 2px;
         }
-        #mensaje {
-            margin-top: 20px;
-            font-size: 1.5em;
+        #display-rgb {
+            margin-top: 10px;
+            font-size: 1.8em;
+            font-weight: 300;
         }
     </style>
 </head>
 <body>
 
-    <div id="reloj"></div>
-    <div id="mensaje">El color de fondo cambia según la hora del sistema.</div>
+    <div id="display-tiempo"></div>
+    <div id="display-rgb"></div>
 
     <script>
         function actualizarRelojYColor() {
@@ -40,38 +43,38 @@
             let minutos = ahora.getMinutes();
             let segundos = ahora.getSeconds();
 
-            // Formato de dos dígitos
-            horas = horas < 10 ? '0' + horas : horas;
-            minutos = minutos < 10 ? '0' + minutos : minutos;
-            segundos = segundos < 10 ? '0' + segundos : segundos;
+            // 1. Formato de dos dígitos para el tiempo
+            const h = horas < 10 ? '0' + horas : horas;
+            const m = minutos < 10 ? '0' + minutos : minutos;
+            const s = segundos < 10 ? '0' + segundos : segundos;
 
-            const tiempoStr = `${horas}:${minutos}:${segundos}`;
-
-            // --- Lógica para el Color RGB Dinámico ---
-            // Usaremos la hora, minutos y segundos para generar los componentes R, G y B.
-
-            // R (Rojo): Basado en las Horas (0-23)
-            // Mapeamos 0-23 a 0-255.
+            // 2. Cálculo del Color RGB
+            // R (Rojo): Basado en las Horas (0-23) -> Mapeado de 0-23 a 0-255
             const R = Math.floor((horas / 23) * 255);
 
-            // G (Verde): Basado en los Minutos (0-59)
-            // Mapeamos 0-59 a 0-255.
+            // G (Verde): Basado en los Minutos (0-59) -> Mapeado de 0-59 a 0-255
             const G = Math.floor((minutos / 59) * 255);
 
-            // B (Azul): Basado en los Segundos (0-59)
-            // Mapeamos 0-59 a 0-255.
+            // B (Azul): Basado en los Segundos (0-59) -> Mapeado de 0-59 a 0-255
             const B = Math.floor((segundos / 59) * 255);
 
+            // 3. Creación de las cadenas de texto y el color
+            const tiempoStr = `${h}:${m}:${s}`;
+            const rgbValoresStr = `(${R}, ${G}, ${B})`;
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
 
-            // Actualizar la hora en el HTML
-            document.getElementById('reloj').textContent = tiempoStr;
+            // 4. Actualización del DOM
+            // Actualiza la hora
+            document.getElementById('display-tiempo').textContent = tiempoStr;
 
-            // Actualizar el color de fondo del body
+            // Actualiza el color RGB entre paréntesis
+            document.getElementById('display-rgb').textContent = `RGB: ${rgbValoresStr}`;
+
+            // Actualiza el color de fondo del body
             document.body.style.backgroundColor = colorRGB;
         }
 
-        // Ejecutar la función inmediatamente para cargar la hora inicial
+        // Ejecutar la función inmediatamente para la carga inicial
         actualizarRelojYColor();
 
         // Llamar a la función cada 1000 milisegundos (1 segundo)
