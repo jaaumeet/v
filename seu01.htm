@@ -29,12 +29,26 @@
             font-size: 1.8em;
             font-weight: 300;
         }
+        #mensaje {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+        .ex1 .parent {
+            display: grid;
+            place-items: center;
+        }
     </style>
 </head>
 <body>
 
     <div id="display-tiempo"></div>
     <div id="display-rgb"></div>
+    <div id="mensaje">El color de fons canvia automàticament amb l'hora oficial.</div>
+    
+    <div class="parent blue" >
+            <div class="box coral" contenteditable>
+                Hola!
+            </div>
 
     <script>
         function actualizarRelojYColor() {
