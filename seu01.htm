@@ -52,12 +52,12 @@
 
             // 3. Creación de las cadenas de texto y el color
             const tiempoStr = `${h}:${m}:${s}`;
-            const rgbValoresStr = `(RGB: ${R}, ${G}, ${B})`; // Formato de RGB con paréntesis
+            const rgbValoresStr = `RGB: ${R}, ${G}, ${B}`; // Formato de RGB
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
 
             // 4. Combinación en una sola cadena de texto simple
             // Se usa un guion largo (—) como separador para claridad
-            const contenidoSimple = `El color de fons [RGB=${rgbValoresStr}] canvia automàticament amb l'hora oficial [HHMMSS=${tiempoStr}].`;
+            const contenidoSimple = `El color de fons [RGB=${rgbValoresStr}] canvia automàticament amb l'hora oficial [HH:MM:SS=${tiempoStr}].`;
 
             // 5. Actualización del DOM (usando textContent para texto simple)
             document.getElementById('display-unificado').textContent = contenidoSimple;
