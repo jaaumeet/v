@@ -27,24 +27,6 @@
             /* Permite que el texto se ajuste si la pantalla es pequeña */
             max-width: 90%; 
         }
-		#parent {
-  			display: grid;
-  			place-items: center;
-  			background: lightblue;
-  			width: 500px;
-  			height: 500px;
-  			resize: both;
-  			overflow: auto;
-		}
-		#child {
-  			// etc.
-  			padding: 0.5rem;
-  			border-radius: 10px;
-  			border: 1px solid red;
-  			background: lightpink;
-  			font-size: 2rem;
-  			text-align: center;
-		}
 </head>
 <body>
 
@@ -52,9 +34,8 @@
     
     <div>Holaaaaaa!</div>
     
-    <div class="parent blue" >
-		<div class="box coral" contenteditable>
-		:)
+    <div contenteditable>
+		Aquest text es pot editar
 	</div>
     
     <script>
