@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj y RGB Flexible (Párrafo o Div)</title>
+    <title>Reloj y Color RGB en Párrafo Simple</title>
     <style>
-        /* Estilos generales */
+        /* Estilos para centrar el contenido y asegurar la visibilidad */
         body {
             display: flex;
             flex-direction: column;
@@ -13,85 +13,65 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            transition: background-color 1s ease, color 1s ease; /* Transiciones suaves */
+            transition: background-color 1s ease; /* Transición suave para el color de fondo */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff; /* Color de texto blanco por defecto */
+            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor contraste */
             text-align: center;
         }
-        /* Estilo para el elemento que muestre el contenido (aplicable a <p> o <div>) */
         #display-unificado {
-            font-size: 3em; 
+            font-size: 3em; /* Tamaño para acomodar ambos valores en una línea o dos */
             font-weight: bold;
             line-height: 1.5;
             padding: 10px;
+            /* Permite que el texto se ajuste si la pantalla es pequeña */
             max-width: 90%; 
-            margin: 0; 
         }
     </style>
 </head>
 <body>
 
-    <p id="display-unificado">Mostra un paràgraf</p>
-    <div id="display-unificado">Mostra un DIV</div>
+    <div id="display-unificado"></div>
     <div>Holaaaaaa!</div>
     
-    <script>
-        // Función de utilidad para determinar el color de texto para el contraste
-        function obtenerColorTexto(R, G, B) {
-            // Luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B)
-            const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
-            return luminancia > 186 ? '#000000' : '#ffffff'; // Negro para fondos claros, blanco para oscuros
-        }
 
+    <script>
         function actualizarRelojYColor() {
             const ahora = new Date();
             let horas = ahora.getHours();
             let minutos = ahora.getMinutes();
             let segundos = ahora.getSeconds();
 
-            // 1. Variables de Tiempo
+            // 1. Formato de dos dígitos para el tiempo
             const h = horas < 10 ? '0' + horas : horas;
             const m = minutos < 10 ? '0' + minutos : minutos;
             const s = segundos < 10 ? '0' + segundos : segundos;
 
-            // 2. Variables de Color RGB (Mapeo de tiempo a 0-255)
+            // 2. Cálculo del Color RGB (Misma lógica de mapeo)
             const R = Math.floor((horas / 23) * 255);
             const G = Math.floor((minutos / 59) * 255);
             const B = Math.floor((segundos / 59) * 255);
 
-            // 3. Creación de las variables de salida
+            // 3. Creación de las cadenas de texto y el color
             const tiempoStr = `${h}:${m}:${s}`;
-            const rgbValoresStr = `(RGB: ${R}, ${G}, ${B})`; 
+            const rgbValoresStr = `${R},${G},${B}`; // Formato de RGB
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
 
             // 4. Combinación en una sola cadena de texto simple
-            // const contenidoSimple = `${tiempoStr} — ${rgbValoresStr}`;
+            // Se usa un guion largo (—) como separador para claridad
             const contenidoSimple = `El color de fons [RGB=${rgbValoresStr}] canvia automàticament amb l'hora oficial [HH:MM:SS=${tiempoStr}].`;
 
-            // 5. Lógica de Contraste
-            const colorTexto = obtenerColorTexto(R, G, B);
+            // 5. Actualización del DOM (usando textContent para texto simple)
+            document.getElementById('display-unificado').textContent = contenidoSimple;
 
-            // 6. Actualización del DOM
-            // La variable 'displayElement' funciona con <p> o <div> mientras tengan el mismo ID.
-            const displayElement = document.getElementById('display-unificado');
-            
-            // Si el elemento existe, actualizamos su contenido
-            if (displayElement) {
-                // Actualiza el texto simple
-                displayElement.textContent = contenidoSimple;
-                
-                // Actualiza el color del texto para el contraste
-                displayElement.style.color = colorTexto;
-                
-                // Aplicamos el color de fondo y el color de texto al body
-                document.body.style.backgroundColor = colorRGB;
-                document.body.style.color = colorTexto; 
-            } else {
-                console.error("El elemento con ID 'display-unificado' no se encontró.");
-            }
+            // 6. Actualiza el color de fondo del body
+            document.body.style.backgroundColor = colorRGB;
         }
 
-        // Ejecutar y establecer el intervalo
+        // Ejecutar la función inmediatamente para la carga inicial
         actualizarRelojYColor();
+
+        // Llamar a la función cada 1000 milisegundos (1 segundo)
         setInterval(actualizarRelojYColor, 1000);
     </script>
 
