@@ -27,14 +27,23 @@
             /* Permite que el texto se ajuste si la pantalla es pequeña */
             max-width: 90%; 
         }
+        .ex1 .parent {
+            display: grid;
+            place-items: center;
+	    }
     </style>
 </head>
 <body>
 
     <div id="display-unificado"></div>
+    
     <div>Holaaaaaa!</div>
     
-
+    <div class="parent blue" >
+		<div class="box coral" contenteditable>
+		:)
+	</div>
+    
     <script>
         function actualizarRelojYColor() {
             const ahora = new Date();
