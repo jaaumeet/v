@@ -3,33 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color Dinámico por Tiempo</title>
+    <title>5 Zonas de Color Dinámico Silencioso</title>
     <style>
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Asegura que el cuerpo ocupe toda la altura */
+            min-height: 100vh; /* Ocupa toda la altura de la ventana */
         }
         .seccion-color {
-            flex-grow: 1; /* Hace que cada sección ocupe el mismo espacio */
+            flex-grow: 1; /* Distribuye el espacio equitativamente */
             height: 20vh; /* Cada sección ocupa 1/5 de la altura visible */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #ffffff; /* Color de texto inicial (se ajustará dinámicamente) */
-            text-shadow: 1px 1px 2px #000000;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 1s ease, color 1s ease; /* Transiciones suaves */
-        }
-        .rgb-value {
-            display: block;
-            font-size: 0.6em;
-            font-weight: normal;
+            transition: background-color 1s ease; /* Transición suave para el color */
+            /* Texto invisible, solo para referencia si se inspecciona el código */
+            color: transparent; 
+            font-size: 0;
         }
     </style>
 </head>
@@ -42,76 +30,44 @@
     <div id="seccion-t-4" class="seccion-color"></div>
 
     <script>
-        // Función de utilidad para determinar el color de texto para el contraste
-        function obtenerColorTexto(R, G, B) {
-            // Luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B)
-            const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
-            return luminancia > 186 ? '#000000' : '#ffffff'; // Negro para fondos claros, blanco para oscuros
-        }
-
         // Función principal para obtener y aplicar color basado en una hora específica
         function aplicarColorPorTiempo(elementoId, horasAjuste) {
             const ahora = new Date();
             
-            // Crea una nueva fecha y le resta las horas de ajuste
+            // Crea una nueva fecha restando las horas de ajuste en milisegundos
             const tiempoAjustado = new Date(ahora.getTime() - (horasAjuste * 60 * 60 * 1000));
             
             let horas = tiempoAjustado.getHours();
             let minutos = tiempoAjustado.getMinutes();
             let segundos = tiempoAjustado.getSeconds();
-
-            // Formato de dos dígitos
-            const h = horas < 10 ? '0' + horas : horas;
-            const m = minutos < 10 ? '0' + minutos : minutos;
-            const s = segundos < 10 ? '0' + segundos : segundos;
             
-            // 1. Cálculo de Color RGB (Mapeo de tiempo a 0-255)
-            // R (Horas): 0-23 -> 0-255
+            // --- Cálculo de Color RGB (Mapeo de tiempo a 0-255) ---
+            // R (Rojo): Basado en Horas (0-23)
             const R = Math.floor((horas / 23) * 255);
-            // G (Minutos): 0-59 -> 0-255
+            // G (Verde): Basado en Minutos (0-59)
             const G = Math.floor((minutos / 59) * 255);
-            // B (Segundos): 0-59 -> 0-255
+            // B (Azul): Basado en Segundos (0-59)
             const B = Math.floor((segundos / 59) * 255);
 
-            // 2. Variables de salida
-            const tiempoStr = `${h}:${m}:${s}`;
-            const rgbValoresStr = `RGB: (${R}, ${G}, ${B})`; 
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
             
-            // 3. Contraste de texto
-            const colorTexto = obtenerColorTexto(R, G, B);
-
-            // 4. Actualización del DOM
+            // Actualización del DOM
             const elemento = document.getElementById(elementoId);
             if (elemento) {
-                // Genera el contenido con la hora y el RGB
-                const titulo = horasAjuste === 0 ? "HORA ACTUAL (T)" : `T - ${horasAjuste} Horas`;
-                
-                elemento.innerHTML = `
-                    ${titulo}
-                    <span class="rgb-value">${tiempoStr}</span>
-                    <span class="rgb-value">${rgbValoresStr}</span>
-                `;
-                
-                // Aplica los colores
+                // Solo se actualiza el color de fondo, el contenido se deja vacío
                 elemento.style.backgroundColor = colorRGB;
-                elemento.style.color = colorTexto;
+                elemento.innerHTML = ''; // Aseguramos que no haya texto visible
             }
         }
 
         // Función que actualiza todas las secciones
         function actualizarTodasLasSecciones() {
-            // Sección T (Hora Actual)
+            // Se aplica el ajuste de horas para cada sección (0, -1, -2, -3, -4)
             aplicarColorPorTiempo('seccion-t', 0); 
-            // Sección T-1 (Hora Actual menos 1 hora)
             aplicarColorPorTiempo('seccion-t-1', 1); 
-            // Sección T-2 (Hora Actual menos 2 horas)
             aplicarColorPorTiempo('seccion-t-2', 2); 
-            // Sección T-3 (Hora Actual menos 3 horas)
             aplicarColorPorTiempo('seccion-t-3', 3); 
-            // Sección T-4 (Hora Actual menos 4 horas)
             aplicarColorPorTiempo('seccion-t-4', 4); 
-            // Nota: El último requisito era T-3 de nuevo, pero he asumido T-4 para tener 5 colores distintos.
         }
 
         // Ejecutar la función inmediatamente y luego cada segundo
