@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color Dinámico en Cuadrícula 2x2</title>
+    <title>5 Zonas de Color Dinámico en Cuadrícula 2x2 (Bordes Finos)</title>
     <style>
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            display: flex; /* Usamos flex para centrar la cuadrícula */
+            display: flex; 
             justify-content: center;
             align-items: center;
             background-color: #333; /* Fondo oscuro para contraste */
@@ -20,13 +20,13 @@
         /* -------------------------------------- */
         #contenedor-cuadricula {
             display: grid;
-            /* Define 2 columnas de igual ancho y auto filas */
             grid-template-columns: 1fr 1fr; 
-            grid-auto-rows: minmax(25vh, auto); /* Altura mínima para las celdas */
-            width: 80vw; /* Ancho del contenedor */
-            height: 80vh; /* Alto del contenedor */
-            gap: 10px; /* Espacio entre las celdas */
-            border: 5px solid #000;
+            grid-auto-rows: minmax(25vh, auto); 
+            width: 80vw; 
+            height: 80vh; 
+            gap: 5px; /* Reducimos el espacio entre las celdas (gap) */
+            /* Borde del contenedor: 2px, menos grueso */
+            border: 2px solid #000; 
         }
 
         .seccion-color {
@@ -43,20 +43,21 @@
             font-size: 1.5em;
             font-weight: bold;
             cursor: text;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px; /* Bordes redondeados */
-            min-height: 100%; /* Asegura que la celda cubra su área */
+            /* Borde de la celda: 1px sólido (muy fino) */
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 3px; /* Bordes ligeramente más finos */
+            min-height: 100%; 
         }
         
-        /* Ajuste especial para que la 5ª sección ocupe toda la última fila (si fuera necesario) */
+        /* Ajuste para que la 5ª sección ocupe toda la última fila */
         #seccion-t-4 {
-            /* Ocupa las 2 columnas en la fila donde se encuentre (última) */
             grid-column: span 2; 
         }
 
         .seccion-color:focus {
             outline: none;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+            /* Sombra más sutil al enfocar */
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.4); 
         }
     </style>
 </head>
@@ -118,9 +119,7 @@
             aplicarColorPorTiempo('seccion-t-4', 4); 
         }
 
-        // ----------------------------------------------------
         // Lógica para marcar el texto como editado por el usuario
-        // ----------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             const secciones = document.querySelectorAll('.seccion-color');
             secciones.forEach(seccion => {
