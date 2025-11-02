@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disseny "Holy Grail" d'Una Kravets</title>
+    
+	<style>
+        body {
+  display: grid;
+  height: 100vh;
+  grid-template: auto 1fr auto / auto 1fr auto
+}
+
+/* etc*/
+
+header {
+  background: lightpink;
+  padding: 2rem;
+  grid-column: 1 / 4;
+}
+
+.left-sidebar {
+  background: lightblue;
+  grid-column: 1 / 2;
+}
+
+main {
+  background: coral;
+  grid-column: 2 / 3;
+}
+
+.right-sidebar {
+  background: yellow;
+  grid-column: 3 / 4;
+}
+
+footer {
+  background: wheat;
+  padding: 2rem;
+  text-align: center;
+  grid-column: 1 / 4;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+.left-sidebar,
+.right-sidebar {
+  padding: 1rem;
+}
+    </style>
+</head>
+<body>
+
+<header><h1 contenteditable>Header.com</h1></header>
+<div class="left-sidebar" contenteditable>Left Sidebar</div>
+<main contenteditable></main>
+<div class="right-sidebar" contenteditable>Right Sidebar</div>
+<footer contenteditable>Footer Content — Header.com 2020</footer>
+    
+
+    <script>
+        function actualizarRelojYColor() {
+            const ahora = new Date();
+            let horas = ahora.getHours();
+            let minutos = ahora.getMinutes();
+            let segundos = ahora.getSeconds();
+
+            // 1. Formato de dos dígitos para el tiempo
+            const h = horas < 10 ? '0' + horas : horas;
+            const m = minutos < 10 ? '0' + minutos : minutos;
+            const s = segundos < 10 ? '0' + segundos : segundos;
+
+            // 2. Cálculo del Color RGB (Misma lógica de mapeo)
+            const R = Math.floor((horas / 23) * 255);
+            const G = Math.floor((minutos / 59) * 255);
+            const B = Math.floor((segundos / 59) * 255);
+
+            // 3. Creación de las cadenas de texto y el color
+            const tiempoStr = `${h}:${m}:${s}`;
+            const rgbValoresStr = `${R},${G},${B}`; // Formato de RGB
+            const colorRGB = `rgb(${R}, ${G}, ${B})`;
+
+            // 4. Combinación en una sola cadena de texto simple
+            // Se usa un guion largo (—) como separador para claridad
+            const contenidoSimple = `El color de fons [RGB=${rgbValoresStr}] canvia automàticament amb l'hora oficial [HH:MM:SS=${tiempoStr}].`;
+
+            // 5. Actualización del DOM (usando textContent para texto simple)
+            document.getElementById('display-unificado').textContent = contenidoSimple;
+
+            // 6. Actualiza el color de fondo del body
+            document.body.style.backgroundColor = colorRGB;
+        }
+
+        // Ejecutar la función inmediatamente para la carga inicial
+        actualizarRelojYColor();
+
+        // Llamar a la función cada 1000 milisegundos (1 segundo)
+        setInterval(actualizarRelojYColor, 1000);
+    </script>
+
+</body>
+</html>
