@@ -26,7 +26,7 @@ header {
 }
 
 main {
-  background: coral;
+  /* background: coral; */
   grid-column: 2 / 3;
 }
 
@@ -36,7 +36,7 @@ main {
 }
 
 footer {
-  /* background: wheat; */
+  background: wheat;
   padding: 2rem;
   text-align: center;
   grid-column: 1 / 4;
@@ -50,13 +50,24 @@ body {
 .right-sidebar {
   padding: 1rem;
 }
+        #display-unificado {
+            font-size: 3em; /* Tamaño para acomodar ambos valores en una línea o dos */
+            font-weight: bold;
+            line-height: 1.5;
+            padding: 10px;
+            /* Permite que el texto se ajuste si la pantalla es pequeña */
+            max-width: 90%; 
+        }
     </style>
 </head>
+
 <body>
 
 <header><h1 contenteditable>Header.com</h1></header>
 <div class="left-sidebar" contenteditable>Left Sidebar</div>
-<main contenteditable></main>
+	<main contenteditable>
+		<div id="display-unificado"></div>
+	</main>
 <div class="right-sidebar" contenteditable>Right Sidebar</div>
 <footer contenteditable>Footer Content — Header.com 2020</footer>
     
