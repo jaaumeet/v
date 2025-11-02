@@ -7,9 +7,17 @@
     
 	<style>
         body {
-  display: grid;
-  height: 100vh;
-  grid-template: auto 1fr auto / auto 1fr auto
+           display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 1s ease; /* Transición suave para el color de fondo */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff; /* Color de texto blanco por defecto */
+            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor contraste */
+            text-align: center;
 }
 
 /* etc*/
@@ -26,7 +34,7 @@ header {
 }
 
 main {
-  background: coral;
+/*  background: coral; */
   grid-column: 2 / 3;
 }
 
@@ -54,11 +62,11 @@ body {
 </head>
 <body>
 
-<header><h1 contenteditable>Header.com</h1></header>
-<div class="left-sidebar" contenteditable>Left Sidebar</div>
-<main contenteditable></main>
-<div class="right-sidebar" contenteditable>Right Sidebar</div>
-<footer contenteditable>Footer Content — Header.com 2020</footer>
+<header><h1 contenteditable>Capçalera editable...</h1></header>
+<div class="left-sidebar" contenteditable>Costat esquerre editable...</div>
+<main contenteditable>Rotllo editable...</main>
+<div class="right-sidebar" contenteditable>Costat dret editable...</div>
+<footer contenteditable>Peu editable...</footer>
     
 
     <script>
