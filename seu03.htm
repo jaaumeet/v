@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color Dinámico en Cuadrícula 2x2 (Bordes Finos)</title>
+    <title>5 Zonas de Color con Texto Editable y Guardado</title>
     <style>
         body {
             margin: 0;
@@ -12,20 +12,17 @@
             display: flex; 
             justify-content: center;
             align-items: center;
-            background-color: #333; /* Fondo oscuro para contraste */
+            background-color: #333; 
         }
 
-        /* -------------------------------------- */
         /* Estilo de la Cuadrícula 2x2 (CSS Grid) */
-        /* -------------------------------------- */
         #contenedor-cuadricula {
             display: grid;
             grid-template-columns: 1fr 1fr; 
             grid-auto-rows: minmax(25vh, auto); 
             width: 80vw; 
             height: 80vh; 
-            gap: 5px; /* Reducimos el espacio entre las celdas (gap) */
-            /* Borde del contenedor: 2px, menos grueso */
+            gap: 5px; 
             border: 2px solid #000; 
         }
 
@@ -43,20 +40,17 @@
             font-size: 1.5em;
             font-weight: bold;
             cursor: text;
-            /* Borde de la celda: 1px sólido (muy fino) */
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 3px; /* Bordes ligeramente más finos */
+            border-radius: 3px; 
             min-height: 100%; 
         }
         
-        /* Ajuste para que la 5ª sección ocupe toda la última fila */
         #seccion-t-4 {
             grid-column: span 2; 
         }
 
         .seccion-color:focus {
             outline: none;
-            /* Sombra más sutil al enfocar */
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.4); 
         }
     </style>
@@ -64,21 +58,47 @@
 <body>
 
     <div id="contenedor-cuadricula">
-        <div id="seccion-t" class="seccion-color" contenteditable="true">T (Hora Actual)</div>
-        <div id="seccion-t-1" class="seccion-color" contenteditable="true">T - 1 Hora</div>
-        <div id="seccion-t-2" class="seccion-color" contenteditable="true">T - 2 Horas</div>
-        <div id="seccion-t-3" class="seccion-color" contenteditable="true">T - 3 Horas</div>
-        <div id="seccion-t-4" class="seccion-color" contenteditable="true">T - 4 Horas (Ocupa toda la fila)</div>
+        <div id="seccion-t" class="seccion-color" contenteditable="true"></div>
+        <div id="seccion-t-1" class="seccion-color" contenteditable="true"></div>
+        <div id="seccion-t-2" class="seccion-color" contenteditable="true"></div>
+        <div id="seccion-t-3" class="seccion-color" contenteditable="true"></div>
+        <div id="seccion-t-4" class="seccion-color" contenteditable="true"></div>
     </div>
 
     <script>
-        // Función de utilidad para determinar el color de texto para el contraste
+        // --- Constantes para localStorage ---
+        const STORAGE_PREFIX = 'seccion_texto_'; 
+
+        // --- Funciones de Utilidad ---
+
+        // Guarda el contenido de una sección en localStorage
+        function guardarTexto(id, contenido) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + id, contenido);
+            } catch (e) {
+                console.error("No se pudo guardar en localStorage:", e);
+            }
+        }
+
+        // Carga el contenido de una sección desde localStorage
+        function cargarTexto(id, textoPorDefecto) {
+            try {
+                const storedText = localStorage.getItem(STORAGE_PREFIX + id);
+                return storedText !== null ? storedText : textoPorDefecto;
+            } catch (e) {
+                console.warn("No se pudo cargar desde localStorage. Usando texto por defecto.", e);
+                return textoPorDefecto;
+            }
+        }
+
+        // Determina el color de texto para el contraste
         function obtenerColorTexto(R, G, B) {
             const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
             return luminancia > 186 ? '#000000' : '#ffffff'; 
         }
 
-        // Función principal para obtener y aplicar color basado en una hora específica
+        // --- Lógica Principal del Color ---
+        
         function aplicarColorPorTiempo(elementoId, horasAjuste) {
             const ahora = new Date();
             const tiempoAjustado = new Date(ahora.getTime() - (horasAjuste * 60 * 60 * 1000));
@@ -95,22 +115,14 @@
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
             const colorTexto = obtenerColorTexto(R, G, B);
 
-            // Actualización del DOM
+            // Actualización de estilos
             const elemento = document.getElementById(elementoId);
             if (elemento) {
-                // Si el usuario no ha editado el texto, actualizamos el contenido por defecto
-                if (elemento.getAttribute('data-edited') !== 'true') {
-                    const defaultText = horasAjuste === 0 ? "T (Hora Actual)" : `T - ${horasAjuste} Horas`;
-                    elemento.textContent = defaultText;
-                }
-                
-                // Aplicamos los colores
                 elemento.style.backgroundColor = colorRGB;
                 elemento.style.color = colorTexto; 
             }
         }
 
-        // Función que actualiza todas las secciones
         function actualizarTodasLasSecciones() {
             aplicarColorPorTiempo('seccion-t', 0); 
             aplicarColorPorTiempo('seccion-t-1', 1); 
@@ -119,20 +131,39 @@
             aplicarColorPorTiempo('seccion-t-4', 4); 
         }
 
-        // Lógica para marcar el texto como editado por el usuario
+        // --- Inicialización y Event Listeners para Guardado ---
+        
         document.addEventListener('DOMContentLoaded', () => {
             const secciones = document.querySelectorAll('.seccion-color');
+            
             secciones.forEach(seccion => {
-                // Al hacer clic y empezar a escribir, marcamos la sección como editada
-                seccion.addEventListener('input', () => {
-                    seccion.setAttribute('data-edited', 'true');
+                const id = seccion.id;
+                const horasAjuste = parseInt(id.split('-').pop()) || 0;
+                
+                // 1. Cargar el texto guardado o usar el valor por defecto
+                const defaultText = horasAjuste === 0 ? "T (Hora Actual)" : `T - ${horasAjuste} Horas`;
+                seccion.textContent = cargarTexto(id, defaultText);
+
+                // 2. Adjuntar evento para guardar el texto cuando el usuario edita
+                // El evento 'blur' se dispara cuando el elemento pierde el foco (el usuario termina de editar).
+                seccion.addEventListener('blur', () => {
+                    guardarTexto(id, seccion.textContent);
+                });
+                
+                // 3. Adjuntar evento para guardar el texto al presionar Enter (opcional)
+                seccion.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); // Evita el salto de línea por defecto
+                        guardarTexto(id, seccion.textContent);
+                        seccion.blur(); // Quita el foco del elemento
+                    }
                 });
             });
-        });
 
-        // Ejecutar y establecer el intervalo
-        actualizarTodasLasSecciones();
-        setInterval(actualizarTodasLasSecciones, 1000);
+            // Iniciar la actualización dinámica de colores
+            actualizarTodasLasSecciones();
+            setInterval(actualizarTodasLasSecciones, 1000);
+        });
     </script>
 
 </body>
