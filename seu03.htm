@@ -3,33 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color Dinámico Silencioso</title>
+    <title>5 Zonas de Color Dinámico y Editables</title>
     <style>
         body {
             margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Ocupa toda la altura de la ventana */
+            min-height: 100vh; 
         }
         .seccion-color {
-            flex-grow: 1; /* Distribuye el espacio equitativamente */
-            height: 20vh; /* Cada sección ocupa 1/5 de la altura visible */
-            transition: background-color 1s ease; /* Transición suave para el color */
-            /* Texto invisible, solo para referencia si se inspecciona el código */
-            color: transparent; 
-            font-size: 0;
+            flex-grow: 1; 
+            height: 20vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box; /* Incluye padding en la altura total */
+            
+            /* Estilos y transiciones para el color */
+            transition: background-color 1s ease, color 1s ease; 
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: text; /* Muestra el cursor de texto para indicar que es editable */
+            
+            /* Borde suave para indicar el área editable (opcional) */
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Estilo para el enfoque (opcional: cambia el borde al hacer clic para editar) */
+        .seccion-color:focus {
+            outline: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.8);
         }
     </style>
 </head>
 <body>
 
-    <div id="seccion-t" class="seccion-color"><p></p>Secció 1</p></div>
-    <div id="seccion-t-1" class="seccion-color"></p>Secció 2</p></div>
-    <div id="seccion-t-2" class="seccion-color"><p></p>Secció 3</p></div>
-    <div id="seccion-t-3" class="seccion-color"><p></p>Secció 4</p></div>
-    <div id="seccion-t-4" class="seccion-color"></p>Secció 5</p></div>
+    <div id="seccion-t" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
+    <div id="seccion-t-1" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
+    <div id="seccion-t-2" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
+    <div id="seccion-t-3" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
+    <div id="seccion-t-4" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
 
     <script>
+        // Función de utilidad para determinar el color de texto (blanco o negro) para el contraste
+        function obtenerColorTexto(R, G, B) {
+            // Luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B)
+            const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
+            return luminancia > 186 ? '#000000' : '#ffffff'; 
+        }
+
         // Función principal para obtener y aplicar color basado en una hora específica
         function aplicarColorPorTiempo(elementoId, horasAjuste) {
             const ahora = new Date();
@@ -42,35 +67,45 @@
             let segundos = tiempoAjustado.getSeconds();
             
             // --- Cálculo de Color RGB (Mapeo de tiempo a 0-255) ---
-            // R (Rojo): Basado en Horas (0-23)
             const R = Math.floor((horas / 23) * 255);
-            // G (Verde): Basado en Minutos (0-59)
             const G = Math.floor((minutos / 59) * 255);
-            // B (Azul): Basado en Segundos (0-59)
             const B = Math.floor((segundos / 59) * 255);
 
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
             
+            // Contraste de texto
+            const colorTexto = obtenerColorTexto(R, G, B);
+
             // Actualización del DOM
             const elemento = document.getElementById(elementoId);
             if (elemento) {
-                // Solo se actualiza el color de fondo, el contenido se deja vacío
+                // Solo actualizamos el color de fondo y el color del texto para el contraste.
+                // NO modificamos innerHTML para preservar el texto editado por el usuario.
                 elemento.style.backgroundColor = colorRGB;
-                elemento.innerHTML = ''; // Aseguramos que no haya texto visible
+                elemento.style.color = colorTexto; 
+
+                // Si la sección no tiene contenido, mostramos el valor por defecto
+                if (elemento.textContent.trim() === "") {
+                     elemento.textContent = `Sección T - ${horasAjuste} Horas`;
+                }
             }
         }
 
         // Función que actualiza todas las secciones
         function actualizarTodasLasSecciones() {
-            // Se aplica el ajuste de horas para cada sección (0, -1, -2, -3, -4)
+            // T (Hora Actual)
             aplicarColorPorTiempo('seccion-t', 0); 
+            // T-1
             aplicarColorPorTiempo('seccion-t-1', 1); 
+            // T-2
             aplicarColorPorTiempo('seccion-t-2', 2); 
+            // T-3
             aplicarColorPorTiempo('seccion-t-3', 3); 
+            // T-4
             aplicarColorPorTiempo('seccion-t-4', 4); 
         }
 
-        // Ejecutar la función inmediatamente y luego cada segundo
+        // Ejecutar y establecer el intervalo
         actualizarTodasLasSecciones();
         setInterval(actualizarTodasLasSecciones, 1000);
     </script>
