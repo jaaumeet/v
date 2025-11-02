@@ -3,54 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color Dinámico y Editables</title>
+    <title>5 Zonas de Color Dinámico en Cuadrícula 2x2</title>
     <style>
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; 
+            min-height: 100vh;
+            display: flex; /* Usamos flex para centrar la cuadrícula */
+            justify-content: center;
+            align-items: center;
+            background-color: #333; /* Fondo oscuro para contraste */
         }
+
+        /* -------------------------------------- */
+        /* Estilo de la Cuadrícula 2x2 (CSS Grid) */
+        /* -------------------------------------- */
+        #contenedor-cuadricula {
+            display: grid;
+            /* Define 2 columnas de igual ancho y auto filas */
+            grid-template-columns: 1fr 1fr; 
+            grid-auto-rows: minmax(25vh, auto); /* Altura mínima para las celdas */
+            width: 80vw; /* Ancho del contenedor */
+            height: 80vh; /* Alto del contenedor */
+            gap: 10px; /* Espacio entre las celdas */
+            border: 5px solid #000;
+        }
+
         .seccion-color {
-            flex-grow: 1; 
-            height: 20vh; 
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 10px;
-            box-sizing: border-box; /* Incluye padding en la altura total */
+            box-sizing: border-box;
             
-            /* Estilos y transiciones para el color */
+            /* Estilos de Contenido y Edición */
+            contenteditable: true; 
             transition: background-color 1s ease, color 1s ease; 
             font-size: 1.5em;
             font-weight: bold;
-            cursor: text; /* Muestra el cursor de texto para indicar que es editable */
-            
-            /* Borde suave para indicar el área editable (opcional) */
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: text;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px; /* Bordes redondeados */
+            min-height: 100%; /* Asegura que la celda cubra su área */
+        }
+        
+        /* Ajuste especial para que la 5ª sección ocupe toda la última fila (si fuera necesario) */
+        #seccion-t-4 {
+            /* Ocupa las 2 columnas en la fila donde se encuentre (última) */
+            grid-column: span 2; 
         }
 
-        /* Estilo para el enfoque (opcional: cambia el borde al hacer clic para editar) */
         .seccion-color:focus {
             outline: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
         }
     </style>
 </head>
 <body>
 
-    <div id="seccion-t" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
-    <div id="seccion-t-1" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
-    <div id="seccion-t-2" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
-    <div id="seccion-t-3" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
-    <div id="seccion-t-4" class="seccion-color" contenteditable="true">Haz clic aquí y edita el texto.</div>
+    <div id="contenedor-cuadricula">
+        <div id="seccion-t" class="seccion-color" contenteditable="true">T (Hora Actual)</div>
+        <div id="seccion-t-1" class="seccion-color" contenteditable="true">T - 1 Hora</div>
+        <div id="seccion-t-2" class="seccion-color" contenteditable="true">T - 2 Horas</div>
+        <div id="seccion-t-3" class="seccion-color" contenteditable="true">T - 3 Horas</div>
+        <div id="seccion-t-4" class="seccion-color" contenteditable="true">T - 4 Horas (Ocupa toda la fila)</div>
+    </div>
 
     <script>
-        // Función de utilidad para determinar el color de texto (blanco o negro) para el contraste
+        // Función de utilidad para determinar el color de texto para el contraste
         function obtenerColorTexto(R, G, B) {
-            // Luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B)
             const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
             return luminancia > 186 ? '#000000' : '#ffffff'; 
         }
@@ -58,52 +80,56 @@
         // Función principal para obtener y aplicar color basado en una hora específica
         function aplicarColorPorTiempo(elementoId, horasAjuste) {
             const ahora = new Date();
-            
-            // Crea una nueva fecha restando las horas de ajuste en milisegundos
             const tiempoAjustado = new Date(ahora.getTime() - (horasAjuste * 60 * 60 * 1000));
             
             let horas = tiempoAjustado.getHours();
             let minutos = tiempoAjustado.getMinutes();
             let segundos = tiempoAjustado.getSeconds();
             
-            // --- Cálculo de Color RGB (Mapeo de tiempo a 0-255) ---
+            // Cálculo de Color RGB
             const R = Math.floor((horas / 23) * 255);
             const G = Math.floor((minutos / 59) * 255);
             const B = Math.floor((segundos / 59) * 255);
 
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
-            
-            // Contraste de texto
             const colorTexto = obtenerColorTexto(R, G, B);
 
             // Actualización del DOM
             const elemento = document.getElementById(elementoId);
             if (elemento) {
-                // Solo actualizamos el color de fondo y el color del texto para el contraste.
-                // NO modificamos innerHTML para preservar el texto editado por el usuario.
+                // Si el usuario no ha editado el texto, actualizamos el contenido por defecto
+                if (elemento.getAttribute('data-edited') !== 'true') {
+                    const defaultText = horasAjuste === 0 ? "T (Hora Actual)" : `T - ${horasAjuste} Horas`;
+                    elemento.textContent = defaultText;
+                }
+                
+                // Aplicamos los colores
                 elemento.style.backgroundColor = colorRGB;
                 elemento.style.color = colorTexto; 
-
-                // Si la sección no tiene contenido, mostramos el valor por defecto
-                if (elemento.textContent.trim() === "") {
-                     elemento.textContent = `Sección T - ${horasAjuste} Horas`;
-                }
             }
         }
 
         // Función que actualiza todas las secciones
         function actualizarTodasLasSecciones() {
-            // T (Hora Actual)
             aplicarColorPorTiempo('seccion-t', 0); 
-            // T-1
             aplicarColorPorTiempo('seccion-t-1', 1); 
-            // T-2
             aplicarColorPorTiempo('seccion-t-2', 2); 
-            // T-3
             aplicarColorPorTiempo('seccion-t-3', 3); 
-            // T-4
             aplicarColorPorTiempo('seccion-t-4', 4); 
         }
+
+        // ----------------------------------------------------
+        // Lógica para marcar el texto como editado por el usuario
+        // ----------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const secciones = document.querySelectorAll('.seccion-color');
+            secciones.forEach(seccion => {
+                // Al hacer clic y empezar a escribir, marcamos la sección como editada
+                seccion.addEventListener('input', () => {
+                    seccion.setAttribute('data-edited', 'true');
+                });
+            });
+        });
 
         // Ejecutar y establecer el intervalo
         actualizarTodasLasSecciones();
