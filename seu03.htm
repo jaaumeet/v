@@ -3,46 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disseny "Holy Grail" d'Una Kravets amb canvi de color dinàmic per a les 5 seccions</title>
-    
-	<style>
+    <title>5 Zonas de Color Dinámico por Tiempo</title>
+    <style>
         body {
-  display: grid;
-  height: 100vh;
-  grid-template: auto 1fr auto / auto 1fr auto
-}
-
-/* etc*/
-
-header {
-  padding: 2rem;
-  grid-column: 1 / 4;
-}
-
-.left-sidebar {
-  grid-column: 1 / 2;
-}
-
-main {
-  grid-column: 2 / 3;
-}
-
-.right-sidebar {
-  grid-column: 3 / 4;
-}
-
-footer {
-  padding: 2rem;
-  text-align: center;
-  grid-column: 1 / 4;
-}
-body {
-  font-family: system-ui, sans-serif;
-            transition: background-color 1s ease; /* Transición suave para el color de fondo */
-            color: #ffffff; /* Color de texto blanco por defecto */
-            text-shadow: 2px 2px 4px #000000; /* Sombra para mejor contraste */
-            text-align: center;
-}
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Asegura que el cuerpo ocupe toda la altura */
+        }
         .seccion-color {
             flex-grow: 1; /* Hace que cada sección ocupe el mismo espacio */
             height: 20vh; /* Cada sección ocupa 1/5 de la altura visible */
@@ -50,7 +19,7 @@ body {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ffffff; /* Color de texto inicial */
+            color: #ffffff; /* Color de texto inicial (se ajustará dinámicamente) */
             text-shadow: 1px 1px 2px #000000;
             font-size: 1.5em;
             font-weight: bold;
@@ -62,60 +31,29 @@ body {
             font-size: 0.6em;
             font-weight: normal;
         }
-.left-sidebar,
-.right-sidebar {
-  padding: 1rem;
-}
-        #display-unificado {
-            font-size: 1em; /* Tamaño para acomodar ambos valores en una línea o dos */
-            font-weight: bold;
-            line-height: 1.5;
-            padding: 10px;
-            /* Permite que el texto se ajuste si la pantalla es pequeña */
-            max-width: 90%; 
-        }
     </style>
 </head>
-
 <body>
 
-<header>
-	<div id="seccion-t-1" class="seccion-color">
-		<h1 contenteditable>Capçalera editable...</h1>
-	</div>
-</header>
-
-<div id="seccion-t-2" class="left-sidebar" contenteditable>
-	secció esquerra editable...
-</div>
-
-<main contenteditable>
-	<div id="seccion-t" class="seccion-color">Secció central editable...</div>
-</main>
-
-<div id="seccion-t-3" class="right-sidebar" contenteditable>
-	Secció dreta editable...
-</div>
-
-<footer id="seccion-t-4" contenteditable>
-	Peu editable...
-</footer>
+    <div id="seccion-t" class="seccion-color"></div>
+    <div id="seccion-t-1" class="seccion-color"></div>
+    <div id="seccion-t-2" class="seccion-color"></div>
+    <div id="seccion-t-3" class="seccion-color"></div>
+    <div id="seccion-t-4" class="seccion-color"></div>
 
     <script>
-        // Función de utilidad para determinar el color de texto (blanco o negro) para el contraste
+        // Función de utilidad para determinar el color de texto para el contraste
         function obtenerColorTexto(R, G, B) {
-            // Fórmula de luminancia para determinar el brillo percibido
+            // Luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B)
             const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
-            // Umbral de 186: si es mayor, el fondo es claro (usar texto negro). Si es menor, el fondo es oscuro (usar texto blanco).
-            return luminancia > 186 ? '#000000' : '#ffffff'; 
+            return luminancia > 186 ? '#000000' : '#ffffff'; // Negro para fondos claros, blanco para oscuros
         }
 
         // Función principal para obtener y aplicar color basado en una hora específica
         function aplicarColorPorTiempo(elementoId, horasAjuste) {
             const ahora = new Date();
             
-            // Crea una nueva fecha restando las horas de ajuste en milisegundos
-            // (1 hora = 60 minutos * 60 segundos * 1000 milisegundos)
+            // Crea una nueva fecha y le resta las horas de ajuste
             const tiempoAjustado = new Date(ahora.getTime() - (horasAjuste * 60 * 60 * 1000));
             
             let horas = tiempoAjustado.getHours();
@@ -127,29 +65,28 @@ body {
             const m = minutos < 10 ? '0' + minutos : minutos;
             const s = segundos < 10 ? '0' + segundos : segundos;
             
-            // --- Cálculo de Color RGB (Mapeo de tiempo a 0-255) ---
-            // R (Rojo): Basado en Horas (0-23)
+            // 1. Cálculo de Color RGB (Mapeo de tiempo a 0-255)
+            // R (Horas): 0-23 -> 0-255
             const R = Math.floor((horas / 23) * 255);
-            // G (Verde): Basado en Minutos (0-59)
+            // G (Minutos): 0-59 -> 0-255
             const G = Math.floor((minutos / 59) * 255);
-            // B (Azul): Basado en Segundos (0-59)
+            // B (Segundos): 0-59 -> 0-255
             const B = Math.floor((segundos / 59) * 255);
 
-            // Variables de salida
+            // 2. Variables de salida
             const tiempoStr = `${h}:${m}:${s}`;
             const rgbValoresStr = `RGB: (${R}, ${G}, ${B})`; 
             const colorRGB = `rgb(${R}, ${G}, ${B})`;
             
-            // Contraste de texto
+            // 3. Contraste de texto
             const colorTexto = obtenerColorTexto(R, G, B);
 
-            // Actualización del DOM
+            // 4. Actualización del DOM
             const elemento = document.getElementById(elementoId);
             if (elemento) {
-                // Genera el contenido con el título, la hora y el RGB
+                // Genera el contenido con la hora y el RGB
                 const titulo = horasAjuste === 0 ? "HORA ACTUAL (T)" : `T - ${horasAjuste} Horas`;
                 
-                // Usamos innerHTML para mostrar la información en varias líneas
                 elemento.innerHTML = `
                     ${titulo}
                     <span class="rgb-value">${tiempoStr}</span>
@@ -164,22 +101,21 @@ body {
 
         // Función que actualiza todas las secciones
         function actualizarTodasLasSecciones() {
-            // T (Hora Actual)
+            // Sección T (Hora Actual)
             aplicarColorPorTiempo('seccion-t', 0); 
-            // T-1
+            // Sección T-1 (Hora Actual menos 1 hora)
             aplicarColorPorTiempo('seccion-t-1', 1); 
-            // T-2
+            // Sección T-2 (Hora Actual menos 2 horas)
             aplicarColorPorTiempo('seccion-t-2', 2); 
-            // T-3
+            // Sección T-3 (Hora Actual menos 3 horas)
             aplicarColorPorTiempo('seccion-t-3', 3); 
-            // T-4
+            // Sección T-4 (Hora Actual menos 4 horas)
             aplicarColorPorTiempo('seccion-t-4', 4); 
+            // Nota: El último requisito era T-3 de nuevo, pero he asumido T-4 para tener 5 colores distintos.
         }
 
-        // 1. Ejecutar la función inmediatamente para cargar los valores iniciales
+        // Ejecutar la función inmediatamente y luego cada segundo
         actualizarTodasLasSecciones();
-        
-        // 2. Llamar a la función cada 1000 milisegundos (1 segundo)
         setInterval(actualizarTodasLasSecciones, 1000);
     </script>
 
