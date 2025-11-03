@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Zonas de Color con Texto Editable y Guardado</title>
+    <title>5 Zonas de Color con Fondo Inverso</title>
     <style>
         body {
             margin: 0;
@@ -12,7 +12,8 @@
             display: flex; 
             justify-content: center;
             align-items: center;
-            background-color: #333; 
+            /* La transición del body asegura que el fondo cambie suavemente */
+            transition: background-color 1s ease; 
         }
 
         /* Estilo de la Cuadrícula 2x2 (CSS Grid) */
@@ -71,7 +72,6 @@
 
         // --- Funciones de Utilidad ---
 
-        // Guarda el contenido de una sección en localStorage
         function guardarTexto(id, contenido) {
             try {
                 localStorage.setItem(STORAGE_PREFIX + id, contenido);
@@ -80,7 +80,6 @@
             }
         }
 
-        // Carga el contenido de una sección desde localStorage
         function cargarTexto(id, textoPorDefecto) {
             try {
                 const storedText = localStorage.getItem(STORAGE_PREFIX + id);
@@ -91,10 +90,18 @@
             }
         }
 
-        // Determina el color de texto para el contraste
         function obtenerColorTexto(R, G, B) {
             const luminancia = (0.299 * R) + (0.587 * G) + (0.114 * B);
             return luminancia > 186 ? '#000000' : '#ffffff'; 
+        }
+        
+        // NUEVA FUNCIÓN: Calcula el color inverso (complementario)
+        function obtenerColorInverso(R, G, B) {
+            // El color inverso se calcula restando cada componente de 255.
+            const R_inv = 255 - R;
+            const G_inv = 255 - G;
+            const B_inv = 255 - B;
+            return `rgb(${R_inv}, ${G_inv}, ${B_inv})`;
         }
 
         // --- Lógica Principal del Color ---
@@ -119,7 +126,13 @@
             const elemento = document.getElementById(elementoId);
             if (elemento) {
                 elemento.style.backgroundColor = colorRGB;
-                elemento.style.color = colorTexto; 
+                elemento.style.color = colorTexto;
+                
+                // Si es la sección-t (Hora Actual), calculamos el color inverso y lo aplicamos al body
+                if (elementoId === 'seccion-t') {
+                    const colorInverso = obtenerColorInverso(R, G, B);
+                    document.body.style.backgroundColor = colorInverso;
+                }
             }
         }
 
@@ -145,7 +158,6 @@
                 seccion.textContent = cargarTexto(id, defaultText);
 
                 // 2. Adjuntar evento para guardar el texto cuando el usuario edita
-                // El evento 'blur' se dispara cuando el elemento pierde el foco (el usuario termina de editar).
                 seccion.addEventListener('blur', () => {
                     guardarTexto(id, seccion.textContent);
                 });
@@ -153,9 +165,9 @@
                 // 3. Adjuntar evento para guardar el texto al presionar Enter (opcional)
                 seccion.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
-                        e.preventDefault(); // Evita el salto de línea por defecto
+                        e.preventDefault(); 
                         guardarTexto(id, seccion.textContent);
-                        seccion.blur(); // Quita el foco del elemento
+                        seccion.blur(); 
                     }
                 });
             });
